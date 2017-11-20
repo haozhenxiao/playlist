@@ -13,7 +13,7 @@ public class PlaylistDaoBean {
 
     private final Map<String, PlayList> playlists = new HashMap<String, PlayList>();
 
-    public PlayList getPlaylistByUUID(String uuid) {
+    public PlayList getOrCreatePlaylistByUUID(String uuid) {
 
         PlayList playList = playlists.get(uuid);
 
@@ -22,34 +22,28 @@ public class PlaylistDaoBean {
         }
 
         //return default playlist
-        return createPlayList(uuid);
+        PlayList newPlaylist = createPlayList(uuid);
+        playlists.put(uuid, newPlaylist);
+        return newPlaylist;
+    }
+    
+    public PlayList getPlaylistByUUID(String uuid) {
+        return playlists.get(uuid);
     }
 
     private PlayList createPlayList(String uuid) {
-        PlayList trackPlayList = new PlayList();
-
-        trackPlayList.setDeleted(false);
-        trackPlayList.setDuration((float) (60 * 60 * 2));
-        trackPlayList.setId(49834);
-        trackPlayList.setLastUpdated(new Date());
-        trackPlayList.setNrOfTracks(376);
-        trackPlayList.setPlayListName("Collection of great songs");
+        PlayList trackPlayList = new PlayList(uuid, 49834, "Collection of great songs", new Date());
         trackPlayList.setPlayListTracks(getPlaylistTracks());
-        trackPlayList.setUuid(uuid);
 
         return trackPlayList;
     }
 
-    private static Set<PlayListTrack> getPlaylistTracks() {
+    private static List<PlayListTrack> getPlaylistTracks() {
 
-        Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();
+        List<PlayListTrack> playListTracks = new ArrayList<PlayListTrack>();
         for (int i = 0; i < 376; i++) {
-            PlayListTrack playListTrack = new PlayListTrack();
-            playListTrack.setDateAdded(new Date());
-            playListTrack.setId(i + 1);
-            playListTrack.setIndex(i);
-            playListTrack.setTrack(getTrack());
-
+            PlayListTrack playListTrack = new PlayListTrack(getTrack(), new Date());
+            playListTracks.add(playListTrack);
         }
 
         return playListTracks;
@@ -57,13 +51,11 @@ public class PlaylistDaoBean {
 
     public static Track getTrack() {
         Random randomGenerator = new Random();
-
-        Track track = new Track();
-        track.setArtistId(randomGenerator.nextInt(10000));
-        track.setDuration(60 * 3);
-
-        int trackNumber = randomGenerator.nextInt(15);
-        track.setTitle("Track no: " + trackNumber);
+        int id = randomGenerator.nextInt(15); // not unique, just for testing.
+        String title = "Track no: " + id;
+        int artistId = randomGenerator.nextInt(10000);
+        float duration = 60 * 3;
+        Track track = new Track(id, artistId, duration, title);
 
         return track;
     }

@@ -9,7 +9,11 @@ public class Track {
     private int artistId;
     private int id;
 
-    public Track() {
+    public Track(int id, int artistId, float duration, String title) {
+        this.id = id;
+        this.artistId = artistId;
+        this.duration = duration;
+        this.title = title;
     }
 
     public String getTitle() {

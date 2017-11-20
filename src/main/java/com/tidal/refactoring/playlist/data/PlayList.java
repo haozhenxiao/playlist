@@ -1,8 +1,8 @@
 package com.tidal.refactoring.playlist.data;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 
 
@@ -11,22 +11,23 @@ import java.util.UUID;
  */
 public class PlayList {
 
+    public static final int MAX_NUM_OF_TRACKS = 500;
+    
     private Integer id;
     private String playListName;
-    private Set<PlayListTrack> playListTracks = new HashSet<PlayListTrack>();
+    private List<PlayListTrack> playListTracks = new ArrayList<PlayListTrack>();
     private Date registeredDate;
     private Date lastUpdated;
     private String uuid;
-    private int nrOfTracks;
     private boolean deleted;
-    private Float duration;
 
-    public PlayList() {
-        this.uuid = UUID.randomUUID().toString();
-        Date d = new Date();
-        this.registeredDate = d;
-        this.lastUpdated = d;
-        this.playListTracks = new HashSet<PlayListTrack>();
+    public PlayList(String uuid, int id, String playListName, Date date) {
+        this.uuid = uuid;
+        this.id = id;
+        this.playListName = playListName;
+        this.registeredDate = date;
+        this.lastUpdated = date;
+        this.deleted = false;
     }
 
 
@@ -46,11 +47,11 @@ public class PlayList {
         this.playListName = playListName;
     }
 
-    public Set<PlayListTrack> getPlayListTracks() {
+    public List<PlayListTrack> getPlayListTracks() {
         return playListTracks;
     }
 
-    public void setPlayListTracks(Set<PlayListTrack> playListTracks) {
+    public void setPlayListTracks(List<PlayListTrack> playListTracks) {
         this.playListTracks = playListTracks;
     }
 
@@ -88,19 +89,15 @@ public class PlayList {
     }
 
     public int getNrOfTracks() {
-        return nrOfTracks;
+        return playListTracks.size();
     }
 
-    public void setNrOfTracks(int nrOfTracks) {
-        this.nrOfTracks = nrOfTracks;
-    }
-
-    public Float getDuration() {
+    public float getDuration() {
+        float duration = 0;
+        for(PlayListTrack t : playListTracks) {
+            duration += t.getTrack().getDuration();
+        }
         return duration;
-    }
-
-    public void setDuration(Float duration) {
-        this.duration = duration;
     }
 
 }
